@@ -1,6 +1,9 @@
 const ACCESS_TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 
+// Legacy keys that may exist from old implementations
+const LEGACY_KEYS = ['auth_token', 'token', 'user'];
+
 export const tokenStorage = {
   getAccessToken: (): string | null => {
     return localStorage.getItem(ACCESS_TOKEN_KEY);
@@ -21,10 +24,37 @@ export const tokenStorage = {
   clearTokens: (): void => {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
+    // Also clear any legacy keys
+    LEGACY_KEYS.forEach(key => localStorage.removeItem(key));
   },
 
   hasTokens: (): boolean => {
-    return !!localStorage.getItem(REFRESH_TOKEN_KEY);
+    // Check for current tokens
+    const hasCurrentTokens = !!localStorage.getItem(ACCESS_TOKEN_KEY) || !!localStorage.getItem(REFRESH_TOKEN_KEY);
+    if (hasCurrentTokens) return true;
+    
+    // Check for legacy auth_token and migrate if found
+    const legacyToken = localStorage.getItem('auth_token');
+    if (legacyToken) {
+      console.log('🔄 Migrating legacy auth_token to access_token');
+      localStorage.setItem(ACCESS_TOKEN_KEY, legacyToken);
+      localStorage.removeItem('auth_token');
+      return true;
+    }
+    
+    return false;
+  },
+
+  /**
+   * Clean up any legacy token storage
+   */
+  cleanupLegacyStorage: (): void => {
+    LEGACY_KEYS.forEach(key => {
+      if (localStorage.getItem(key)) {
+        console.log(`🧹 Removing legacy storage key: ${key}`);
+        localStorage.removeItem(key);
+      }
+    });
   },
 };
 
