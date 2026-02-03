@@ -86,8 +86,14 @@ apiClient.interceptors.response.use(
           refreshToken,
         });
 
-        const { accessToken } = response.data;
+        // Handle both wrapped and direct response formats
+        const data = response.data.data || response.data;
+        const { accessToken, refreshToken: newRefreshToken } = data;
+        
         tokenStorage.setAccessToken(accessToken);
+        if (newRefreshToken) {
+          tokenStorage.setRefreshToken(newRefreshToken);
+        }
 
         isRefreshing = false;
         processQueue(null, accessToken);
