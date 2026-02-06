@@ -15,7 +15,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (data: LoginRequest) => Promise<void>;
   signup: (data: SignupRequest) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,14 +27,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Check if user has refresh token and auto-login
     const initializeAuth = async () => {
+      console.log('🔄 AuthContext: Initializing auth...');
+      console.log('🔑 Has tokens:', tokenStorage.hasTokens());
+      console.log('🔑 Access token:', tokenStorage.getAccessToken()?.substring(0, 30) + '...');
+      console.log('🔑 Refresh token:', tokenStorage.getRefreshToken()?.substring(0, 30) + '...');
+      
       if (tokenStorage.hasTokens()) {
         try {
+          console.log('📡 AuthContext: Fetching current user...');
           const currentUser = await authService.getMe();
+          console.log('✅ AuthContext: Got user:', currentUser);
           setUser(currentUser);
         } catch (error) {
+          console.error('❌ AuthContext: Failed to get user, clearing tokens:', error);
           // Token invalid or expired, clear tokens
           tokenStorage.clearTokens();
         }
+      } else {
+        console.log('⚠️ AuthContext: No tokens found');
       }
       setIsLoading(false);
     };
@@ -60,8 +70,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     console.log('✅ AuthContext: User state updated');
   };
 
-  const logout = () => {
-    authService.logout();
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
     setUser(null);
   };
 
