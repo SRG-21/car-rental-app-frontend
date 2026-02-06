@@ -35,7 +35,24 @@ export default function SignupPage() {
       await signup({ email, password, name });
       navigate('/search');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to create account');
+      console.error('Signup error:', err);
+      
+      // Extract error message from API response
+      const errorData = err.response?.data;
+      
+      if (errorData?.error?.details?.length > 0) {
+        // Show detailed validation errors
+        const messages = errorData.error.details.map((d: any) => d.message).join('. ');
+        setError(messages);
+      } else if (errorData?.error?.message) {
+        setError(errorData.error.message);
+      } else if (errorData?.message) {
+        setError(errorData.message);
+      } else if (err.message) {
+        setError(err.message);
+      } else {
+        setError('Failed to create account');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -97,7 +114,7 @@ export default function SignupPage() {
                 required
                 autoComplete="new-password"
                 placeholder="At least 8 characters"
-                helperText="Must be at least 8 characters"
+                helperText="Min 8 characters, 1 uppercase letter, 1 number"
               />
               <button
                 type="button"

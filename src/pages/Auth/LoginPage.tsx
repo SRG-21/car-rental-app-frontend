@@ -8,8 +8,8 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
-  const [email, setEmail] = useState('test@example.com');
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -26,8 +26,19 @@ export default function LoginPage() {
       navigate(from, { replace: true });
     } catch (err: any) {
       console.error('Login error:', err);
-      const errorMessage = err.response?.data?.message || err.message || 'Invalid email or password';
-      setError(errorMessage);
+      
+      // Extract error message from API response
+      const errorData = err.response?.data;
+      
+      if (errorData?.error?.message) {
+        setError(errorData.error.message);
+      } else if (errorData?.message) {
+        setError(errorData.message);
+      } else if (err.message) {
+        setError(err.message);
+      } else {
+        setError('Invalid email or password');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -68,7 +79,7 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
-              placeholder="test@example.com"
+              placeholder="you@example.com"
             />
 
             <div className="relative">
@@ -79,7 +90,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 autoComplete="current-password"
-                placeholder="password123"
+                placeholder="Enter your password"
               />
               <button
                 type="button"
@@ -90,12 +101,6 @@ export default function LoginPage() {
                 {showPassword ? '🙈' : '👁️'}
               </button>
             </div>
-          </div>
-
-          <div className="text-sm text-gray-600 bg-primary-50 border border-primary-200 rounded-md p-4">
-            <p className="font-medium text-primary-900 mb-1">🔑 Test Credentials:</p>
-            <p className="text-primary-800">Email: test@example.com</p>
-            <p className="text-primary-800">Password: password123</p>
           </div>
 
           <Button type="submit" className="w-full" isLoading={isLoading}>
