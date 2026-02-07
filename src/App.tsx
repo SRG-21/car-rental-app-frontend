@@ -12,6 +12,7 @@ const BookingPage = React.lazy(() => import('./pages/Booking/BookingPage'));
 const ProfilePage = React.lazy(() => import('./pages/Profile/ProfilePage'));
 const LoginPage = React.lazy(() => import('./pages/Auth/LoginPage'));
 const SignupPage = React.lazy(() => import('./pages/Auth/SignupPage'));
+const AdminCarsPage = React.lazy(() => import('./pages/Admin/AdminCarsPage'));
 const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage'));
 
 function App() {
@@ -27,12 +28,35 @@ function App() {
             }
           >
             <Routes>
-              <Route path="/" element={<Navigate to="/search" replace />} />
-              <Route path="/search" element={<SearchPage />} />
-              <Route path="/cars/:id" element={<CarDetailPage />} />
+              {/* Public routes - only login and signup */}
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               
+              {/* Protected routes - require authentication */}
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <Navigate to="/search" replace />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/search"
+                element={
+                  <ProtectedRoute>
+                    <SearchPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/cars/:id"
+                element={
+                  <ProtectedRoute>
+                    <CarDetailPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/book/:carId"
                 element={
@@ -46,6 +70,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/cars"
+                element={
+                  <ProtectedRoute>
+                    <AdminCarsPage />
                   </ProtectedRoute>
                 }
               />
