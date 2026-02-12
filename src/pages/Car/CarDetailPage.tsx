@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { carService } from '@/services';
-import { Car } from '@/types';
 
 export default function CarDetailPage() {
   const { id } = useParams<{ id: string }>();

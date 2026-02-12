@@ -1,11 +1,24 @@
 import { http, HttpResponse } from 'msw';
-import { Booking, BookingRequest } from '@/types';
+import { BookingRequest, MockCar } from '@/types';
 import { mockCars } from '../data/cars';
 
 const API_URL = 'http://localhost:3000';
 
+// Mock booking type (different from API Booking type)
+interface MockBooking {
+  id: string;
+  userId: string;
+  carId: string;
+  car: MockCar;
+  pickupTime: string;
+  dropoffTime: string;
+  totalPrice: number;
+  status: 'confirmed' | 'cancelled' | 'completed';
+  createdAt: string;
+}
+
 // In-memory booking storage
-const bookings: Booking[] = [];
+const bookings: MockBooking[] = [];
 
 function decodeToken(token: string): any {
   try {
@@ -86,7 +99,7 @@ export const bookingHandlers = [
     const totalPrice = days * car.pricePerDay;
 
     // Create booking
-    const newBooking: Booking = {
+    const newBooking: MockBooking = {
       id: `booking-${Date.now()}`,
       userId: payload.userId,
       carId: body.carId,

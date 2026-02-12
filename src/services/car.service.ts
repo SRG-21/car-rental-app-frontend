@@ -1,5 +1,5 @@
 import apiClient from './api';
-import { Car, CarSearchResult, SearchParams, SearchResponse, CreateCarRequest, UpdateCarRequest } from '@/types';
+import { Car, SearchParams, SearchResponse, CreateCarRequest, UpdateCarRequest } from '@/types';
 
 export const carService = {
   /**

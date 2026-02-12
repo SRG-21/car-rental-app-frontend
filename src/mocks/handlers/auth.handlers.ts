@@ -55,7 +55,7 @@ export const authHandlers = [
     const newUser: User = {
       id: `user-${Date.now()}`,
       email: body.email,
-      name: body.name,
+      name: body.name || null,
       createdAt: new Date().toISOString(),
     };
 

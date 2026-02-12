@@ -48,6 +48,24 @@ export interface Car {
   updatedAt: string;
 }
 
+// Mock car type for MSW mock data (different structure)
+export interface MockCar {
+  id: string;
+  name: string;
+  make: string;
+  model: string;
+  year: number;
+  fuelType: FuelType;
+  transmission: TransmissionType;
+  seats: number;
+  pricePerDay: number;
+  lat: number;
+  lon: number;
+  images: string[];
+  features: string[];
+  available: boolean;
+}
+
 // Search result car from GET /search
 export interface CarSearchResult {
   id: string;

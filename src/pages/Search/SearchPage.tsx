@@ -41,7 +41,7 @@ export default function SearchPage() {
   };
 
   // Fetch cars based on search params and trigger
-  const { data: searchResponse, isLoading, error, isFetching } = useQuery({
+  const { data: searchResponse, isLoading, isFetching } = useQuery({
     queryKey: ['cars', selectedCity.id, radius, fuelType, transmission, seats, pickupDate, dropoffDate, searchQuery, page, searchTrigger],
     queryFn: () => carService.searchCars(buildSearchParams()),
     enabled: searchTrigger > 0,

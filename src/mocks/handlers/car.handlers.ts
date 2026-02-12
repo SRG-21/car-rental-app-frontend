@@ -1,9 +1,18 @@
 import { http, HttpResponse } from 'msw';
 import { mockCars } from '../data/cars';
-import { SearchParams } from '@/types';
 import { haversineDistance } from '@/utils/geo';
 
 const API_URL = 'http://localhost:3000';
+
+// Local search params type for MSW handlers
+interface MockSearchParams {
+  lat?: number;
+  lon?: number;
+  pickup?: string;
+  dropoff?: string;
+  seats?: number;
+  fuelType?: string;
+}
 
 export const carHandlers = [
   // Get car by ID
@@ -24,7 +33,7 @@ export const carHandlers = [
   // Search cars
   http.get(`${API_URL}/search`, ({ request }) => {
     const url = new URL(request.url);
-    const params: SearchParams = {
+    const params: MockSearchParams = {
       lat: url.searchParams.get('lat')
         ? parseFloat(url.searchParams.get('lat')!)
         : undefined,
@@ -36,7 +45,7 @@ export const carHandlers = [
       seats: url.searchParams.get('seats')
         ? parseInt(url.searchParams.get('seats')!)
         : undefined,
-      fuelType: url.searchParams.get('fuelType') as any,
+      fuelType: url.searchParams.get('fuelType') || undefined,
     };
 
     let filteredCars = [...mockCars];

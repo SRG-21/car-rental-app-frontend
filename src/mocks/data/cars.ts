@@ -1,9 +1,9 @@
-import { Car } from '@/types';
+import { MockCar } from '@/types';
 
 // Base location: San Francisco (37.7749, -122.4194)
 // Generate cars within ~10km radius
 
-export const mockCars: Car[] = [
+export const mockCars: MockCar[] = [
   {
     id: '1',
     name: 'Tesla Model 3',
